@@ -103,7 +103,10 @@ home-manager.users.rob = { pkgs, ... }: {
 		init.defaultBranch = "main";
                 safe.directory = ["/etc/nixos"];
 	}; 
-  gtk.enable = true; 
+  gtk = {
+    enable = true;
+    theme.name = "Vivid-Dark-GTK";
+  }; 
   # The state version is required and should stay at the version you
   # originally installed.
   home.stateVersion = "24.05";
