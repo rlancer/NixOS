@@ -50,16 +50,7 @@
   services.xserver.displayManager.gdm.enable = true;
 
 
-  services.xserver.desktopManager.gnome = {
-    enable = true;
-    extraGSettingsOverrides = {
-      "org.gnome.desktop.interface" = {
-        "clock-format" = "12h";
-        "gtk-theme" = "Adwaita-dark";
-        "color-scheme" = "prefer-dark";
-      };
-    };
-  };  
+  services.xserver.desktopManager.gnome.enable = true;
 
 # Configure keymap in X11
   services.xserver.xkb = {
@@ -111,7 +102,8 @@ home-manager.users.rob = { pkgs, ... }: {
   programs.git.extraConfig = {
 		init.defaultBranch = "main";
                 safe.directory = ["/etc/nixos"];
-	};  
+	}; 
+  gtk.enable = true; 
   # The state version is required and should stay at the version you
   # originally installed.
   home.stateVersion = "24.05";
