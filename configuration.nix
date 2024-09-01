@@ -48,9 +48,20 @@
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
 
-  # Configure keymap in X11
+
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+    extraGSettingsOverrides = {
+      "org.gnome.desktop.interface" = {
+        "clock-format" = "12h";
+        "gtk-theme" = "Adwaita-dark";
+        "color-scheme" = "prefer-dark";
+      };
+    };
+  };  
+
+# Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
