@@ -91,28 +91,36 @@
   };
 
 home-manager.users.rob = { pkgs, ... }: {
-  home.packages = [ pkgs.atool pkgs.httpie ];
+  home.packages = [ pkgs.atool pkgs.httpie pkgs.adw-gtk3];
   programs.bash.enable = true;
   programs.git = {
  	enable = true;
   	userEmail = "robert.lancer@gmail.com";
   	userName = "Robert Lancer";
-  
   };
+  
   programs.git.extraConfig = {
 		init.defaultBranch = "main";
                 safe.directory = ["/etc/nixos"];
-	}; 
-  gtk = {
+	};
+
+
+  programs.vim = {
     enable = true;
-    theme.name = "Vivid-Dark-GTK";
+    plugins = with pkgs.vimPlugins; [ vim-airline ];
+    settings = { ignorecase = true; };
+    extraConfig = ''
+      set mouse=a
+    '';
+  };
+  # Style 
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+      gtk-theme = "adw-gtk3-dark";
+    };
   };
   
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];
-    configPackages = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];
-  }; 
   # The state version is required and should stay at the version you
   # originally installed.
   home.stateVersion = "24.05";
