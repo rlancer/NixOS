@@ -106,6 +106,12 @@ home-manager.users.rob = { pkgs, ... }: {
   gtk = {
     enable = true;
     theme.name = "Vivid-Dark-GTK";
+  };
+  
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];
+    configPackages = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-wlr ];
   }; 
   # The state version is required and should stay at the version you
   # originally installed.
