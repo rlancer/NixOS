@@ -105,6 +105,20 @@ home-manager.users.rob = { pkgs, ... }: {
                 safe.directory = ["/etc/nixos"];
 	};
 
+ programs.starship = {
+    enable = true;
+    # Configuration written to ~/.config/starship.toml
+    settings = {
+      # add_newline = false;
+
+      # character = {
+      #   success_symbol = "[➜](bold green)";
+      #   error_symbol = "[➜](bold red)";
+      # };
+
+      # package.disabled = true;
+    };
+  };
 
   programs.vim = {
     enable = true;
@@ -131,7 +145,10 @@ home-manager.users.rob = { pkgs, ... }: {
     shellAliases = {
       update = "sudo nixos-rebuild switch";
    };
- 
+
+   initExtra = ''
+     eval "$(starship init zsh)"
+    ''; 
 
    oh-my-zsh = {
     enable = true;
