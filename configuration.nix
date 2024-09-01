@@ -118,7 +118,11 @@ home-manager.users.rob = { pkgs, ... }: {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       gtk-theme = "adw-gtk3-dark";
-    };
+      clock-format = "12h";
+   };
+   "org/gnome/shell/overrides" = {
+      edge-tiling = true;
+   };
   };
   
   # The state version is required and should stay at the version you
