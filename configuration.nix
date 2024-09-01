@@ -91,8 +91,10 @@
   };
 programs.zsh.enable = true;
 users.defaultUserShell = pkgs.zsh;
+home-manager.useGlobalPkgs = true;
 home-manager.users.rob = { pkgs, ... }: {
   home.packages = [ pkgs.atool pkgs.httpie pkgs.adw-gtk3];
+        
   programs.bash.enable = true;
   programs.git = {
  	enable = true;
@@ -105,7 +107,12 @@ home-manager.users.rob = { pkgs, ... }: {
                 safe.directory = ["/etc/nixos"];
 	};
 
- programs.starship = {
+  programs.vscode = {
+    enable = true;
+    package = pkgs.vscode;
+  };
+
+  programs.starship = {
     enable = true;
     # Configuration written to ~/.config/starship.toml
     settings = {
@@ -167,6 +174,7 @@ home-manager.users.rob = { pkgs, ... }: {
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  # nixpkgs.config.allowUnfreePredicate = (_: true); tried this didnt change anything for some rason vscode wont install because of unfree
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
