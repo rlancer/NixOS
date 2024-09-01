@@ -91,7 +91,7 @@
   };
 programs.zsh.enable = true;
 users.defaultUserShell = pkgs.zsh;
-home-manager.useGlobalPkgs = true;
+home-manager.useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-does-not-allowunfree/25681/5 - fixed unfree issue for home manager
 home-manager.users.rob = { pkgs, ... }: {
   home.packages = [ pkgs.atool pkgs.httpie pkgs.adw-gtk3];
         
