@@ -89,7 +89,8 @@
     #  thunderbird
     ];
   };
-
+programs.zsh.enable = true;
+users.defaultUserShell = pkgs.zsh;
 home-manager.users.rob = { pkgs, ... }: {
   home.packages = [ pkgs.atool pkgs.httpie pkgs.adw-gtk3];
   programs.bash.enable = true;
@@ -124,6 +125,20 @@ home-manager.users.rob = { pkgs, ... }: {
       edge-tiling = true;
    };
   };
+
+  programs.zsh = {
+    enable = true;
+    shellAliases = {
+      update = "sudo nixos-rebuild switch";
+   };
+ 
+
+   oh-my-zsh = {
+    enable = true;
+    plugins = [ ];
+    theme = "agnoster";
+  };
+ };
   
   # The state version is required and should stay at the version you
   # originally installed.
