@@ -77,6 +77,11 @@
     #media-session.enable = true;
   };
 
+virtualisation.docker.rootless = {
+  enable = true;
+  setSocketVariable = true;
+};
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -84,7 +89,7 @@
   users.users.rob = {
     isNormalUser = true;
     description = "Rob";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -95,6 +100,12 @@ home-manager.useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-
 home-manager.users.rob = { pkgs, ... }: {
   home.packages = [ pkgs.atool pkgs.httpie pkgs.adw-gtk3];
         
+  # xdg.mimeApps = {
+  #  enable = true
+  #  defaultApplications = {"":""};
+  # };
+
+
   programs.bash.enable = true;
   programs.git = {
  	enable = true;
@@ -104,12 +115,24 @@ home-manager.users.rob = { pkgs, ... }: {
   
   programs.git.extraConfig = {
 		init.defaultBranch = "main";
-                safe.directory = ["/etc/nixos"];
+    safe.directory = ["/etc/nixos"];
 	};
-
+    
   programs.vscode = {
     enable = true;
-    package = pkgs.vscode;
+    extensions = with pkgs.vscode-extensions; [
+      dracula-theme.theme-dracula
+      vscodevim.vim
+      jnoortheen.nix-ide
+      yzhang.markdown-all-in-one
+    ];
+
+    userSettings = {
+        # "files.autoSave" = "off";
+       # "[nix]"."editor.tabSize" = 2;
+     # "workbench.preferredDarkColorTheme" = "Default Dark Modern";
+     # "workbench.preferredLightColorTheme" = "Default Light Modern";
+    };
   };
 
   programs.starship = {
@@ -135,6 +158,12 @@ home-manager.users.rob = { pkgs, ... }: {
       set mouse=a
     '';
   };
+
+  programs.chromium = {
+    enable = true;
+    package = pkgs.chromium;
+  };  
+
   # Style 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
@@ -174,12 +203,13 @@ home-manager.users.rob = { pkgs, ... }: {
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  # nixpkgs.config.allowUnfreePredicate = (_: true); tried this didnt change anything for some rason vscode wont install because of unfree
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
    pkgs.nerdfonts # needed for starship
+   pkgs.chromium
+   pkgs.google-chrome
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
