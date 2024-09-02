@@ -168,6 +168,7 @@ home-manager.users.rob = { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
+      # scaling-factor = 2; - this didnt work
       gtk-theme = "adw-gtk3-dark";
       clock-format = "12h";
    };
@@ -210,7 +211,8 @@ home-manager.users.rob = { pkgs, ... }: {
    pkgs.nerdfonts # needed for starship
    pkgs.chromium
    pkgs.google-chrome
-  ];
+   slack
+ ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
