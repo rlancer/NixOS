@@ -44,13 +44,23 @@
   };
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  services.xserver ={
+    enable = true;
+    # dpi = 180; - doesnt help
+  };
 
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
 
 
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+    extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+    extraGSettingsOverrides = ''
+   [org.gnome.mutter]
+   experimental-features=['scale-monitor-framebuffer']
+ '';
+  };
 
 # Configure keymap in X11
   services.xserver.xkb = {
@@ -125,6 +135,7 @@ home-manager.users.rob = { pkgs, ... }: {
       vscodevim.vim
       jnoortheen.nix-ide
       yzhang.markdown-all-in-one
+      ms-vscode-remote.remote-containers
     ];
 
     userSettings = {
@@ -168,7 +179,7 @@ home-manager.users.rob = { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
-      # scaling-factor = 2; - this didnt work
+      # scaling-factor = 2; # this didnt work
       gtk-theme = "adw-gtk3-dark";
       clock-format = "12h";
    };
@@ -181,6 +192,7 @@ home-manager.users.rob = { pkgs, ... }: {
     enable = true;
     shellAliases = {
       update = "sudo nixos-rebuild switch";
+      edit = "sudo vim /etc/nixos/configuration.nix";
    };
 
    initExtra = ''
