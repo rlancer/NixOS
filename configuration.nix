@@ -70,8 +70,13 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-
-  # Enable sound with pipewire.
+# trying to show battery life in gnome
+hardware.bluetooth.settings = {
+	General = {
+		Experimental = true;
+	};
+};  
+# Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -87,10 +92,12 @@
     #media-session.enable = true;
   };
 
-virtualisation.docker.rootless = {
-  enable = true;
-  setSocketVariable = true;
-};
+  # Rootless mode might of broke vscode 
+  virtualisation.docker.rootless = {
+     enable = true;
+     setSocketVariable = true;
+   };
+
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -104,11 +111,21 @@ virtualisation.docker.rootless = {
     #  thunderbird
     ];
   };
+  
+programs.direnv.enable = true; 
 programs.zsh.enable = true;
 users.defaultUserShell = pkgs.zsh;
 home-manager.useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-does-not-allowunfree/25681/5 - fixed unfree issue for home manager
 home-manager.users.rob = { pkgs, ... }: {
-  home.packages = [ pkgs.atool pkgs.httpie pkgs.adw-gtk3];
+  home.packages = [ 
+    pkgs.atool 
+    pkgs.httpie 
+    pkgs.adw-gtk3
+    pkgs.gnomeExtensions.bluetooth-battery-meter
+    pkgs.gnomeExtensions.screenshot-tool
+    pkgs.gnumake
+    pkgs.xsel
+  ];
         
   # xdg.mimeApps = {
   #  enable = true
@@ -127,15 +144,33 @@ home-manager.users.rob = { pkgs, ... }: {
 		init.defaultBranch = "main";
     safe.directory = ["/etc/nixos"];
 	};
-    
+ # programs.rbenv = {
+ #   enable = true;
+ #   plugins = [{name = "ruby-build";
+ #   src = pkgs.fetchFromGitHub {
+ #     owner = "rbenv";
+ #     repo = "ruby-build";
+ #     rev = "v20240903";
+ #     hash = "sha256-lhsdcTPVJkLURSz4yd952eGvReeVU10I9NxosMvKYSk=";
+ #   };
+ # }];
+ # };    
+
   programs.vscode = {
     enable = true;
     extensions = with pkgs.vscode-extensions; [
       dracula-theme.theme-dracula
-      vscodevim.vim
+      # vscodevim.vim
       jnoortheen.nix-ide
       yzhang.markdown-all-in-one
       ms-vscode-remote.remote-containers
+      github.copilot
+      ms-azuretools.vscode-docker
+      eamodio.gitlens
+      github.copilot-chat
+      github.vscode-github-actions
+      donjayamanne.githistory
+      esbenp.prettier-vscode
     ];
 
     userSettings = {
@@ -185,8 +220,14 @@ home-manager.users.rob = { pkgs, ... }: {
    };
    "org/gnome/shell/overrides" = {
       edge-tiling = true;
-   };
+    };
+    "org/gnome/shell" = {
+      enabled-extensions = [
+        "bluetooth-battery-meter" "screenshot-tool"
+    ];
   };
+};
+
 
   programs.zsh = {
     enable = true;
@@ -220,11 +261,21 @@ home-manager.users.rob = { pkgs, ... }: {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   pkgs.nerdfonts # needed for starship
-   pkgs.chromium
-   pkgs.google-chrome
+   nerdfonts # needed for starship
+   chromium
+   google-chrome
    slack
+   zoom-us
+   docker-compose
+   devenv
+   libreoffice
+   heroku
+   inkscape
  ];
+
+ # Enable Nix Flakes
+nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -244,7 +295,10 @@ home-manager.users.rob = { pkgs, ... }: {
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
+networking.extraHosts =
+  ''
+    127.0.0.1 robslocal
+  '';
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
