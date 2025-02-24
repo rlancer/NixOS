@@ -55,7 +55,7 @@
 
   services.xserver.desktopManager.gnome = {
     enable = true;
-    extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+#    extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
     extraGSettingsOverrides = ''
    [org.gnome.mutter]
    experimental-features=['scale-monitor-framebuffer']
@@ -77,7 +77,7 @@ hardware.bluetooth.settings = {
 	};
 };  
 # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -93,11 +93,18 @@ hardware.bluetooth.settings = {
   };
 
   # Rootless mode might of broke vscode 
-  virtualisation.docker.rootless = {
-     enable = true;
-     setSocketVariable = true;
-   };
+#  virtualisation.docker.rootless = {
+#     enable = true;
+#     setSocketVariable = true;
+#   };
 
+virtualisation.docker.enable = true;
+users.extraGroups.docker.members = [ "rob" ];
+
+fonts.packages = with pkgs; [
+  nerd-fonts.fira-code
+  nerd-fonts.droid-sans-mono
+];
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -119,12 +126,15 @@ home-manager.useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-
 home-manager.users.rob = { pkgs, ... }: {
   home.packages = [ 
     pkgs.atool 
+  # pkgs.ghostty
     pkgs.httpie 
     pkgs.adw-gtk3
     pkgs.gnomeExtensions.bluetooth-battery-meter
     pkgs.gnomeExtensions.screenshot-tool
     pkgs.gnumake
     pkgs.xsel
+    pkgs.ansible
+    pkgs.duckdb
   ];
         
   # xdg.mimeApps = {
@@ -141,7 +151,10 @@ home-manager.users.rob = { pkgs, ... }: {
   };
   
   programs.git.extraConfig = {
-		init.defaultBranch = "main";
+    init.defaultBranch = "main";
+    core = {
+      editor = "vim";
+    };
     safe.directory = ["/etc/nixos"];
 	};
  # programs.rbenv = {
@@ -155,10 +168,15 @@ home-manager.users.rob = { pkgs, ... }: {
  #   };
  # }];
  # };    
+ 
+ programs.awscli = {
+   enable = true;
+ };
 
-  programs.vscode = {
-    enable = true;
-    extensions = with pkgs.vscode-extensions; [
+ programs.vscode = {
+   enable = true;
+   profiles.default = {
+      extensions = with pkgs.vscode-extensions; [
       dracula-theme.theme-dracula
       # vscodevim.vim
       jnoortheen.nix-ide
@@ -178,7 +196,8 @@ home-manager.users.rob = { pkgs, ... }: {
        # "[nix]"."editor.tabSize" = 2;
      # "workbench.preferredDarkColorTheme" = "Default Dark Modern";
      # "workbench.preferredLightColorTheme" = "Default Light Modern";
-    };
+   };
+  };
   };
 
   programs.starship = {
@@ -205,11 +224,6 @@ home-manager.users.rob = { pkgs, ... }: {
     '';
   };
 
-  programs.chromium = {
-    enable = true;
-    package = pkgs.chromium;
-  };  
-
   # Style 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
@@ -232,6 +246,7 @@ home-manager.users.rob = { pkgs, ... }: {
   programs.zsh = {
     enable = true;
     shellAliases = {
+      upgrade = "sudo nixos-rebuild switch --upgrade";
       update = "sudo nixos-rebuild switch";
       edit = "sudo vim /etc/nixos/configuration.nix";
    };
@@ -261,8 +276,7 @@ home-manager.users.rob = { pkgs, ... }: {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   nerdfonts # needed for starship
-   chromium
+   unzip
    google-chrome
    slack
    zoom-us
@@ -276,6 +290,13 @@ home-manager.users.rob = { pkgs, ... }: {
  # Enable Nix Flakes
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+ nix.settings = {
+    substituters = [ "https://nixpkgs-ruby.cachix.org" "https://cache.nixos.org/" ];
+    trusted-public-keys = [ 
+      "nixpkgs-ruby.cachix.org-1:RKp+M/Y29IP0kf2VJQqRZeoZaWNXdu63iNufz8kCiBQ="
+      "cache.nixos.org-1:LS3WLTDzZ58H2LuW5NkLMbe1HAYs4szPvCBTxj4gS3E="
+    ];
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -299,7 +320,13 @@ networking.extraHosts =
   ''
     127.0.0.1 robslocal
   '';
-  # This value determines the NixOS release from which the default
+
+system.autoUpgrade.enable = true;
+system.autoUpgrade.channel = "https://channels.nixos.org/nixos-24.11";
+system.autoUpgrade.allowReboot = false;
+
+
+# This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
