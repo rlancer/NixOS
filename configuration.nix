@@ -55,7 +55,7 @@
 
   services.xserver.desktopManager.gnome = {
     enable = true;
-#    extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+    extraGSettingsOverridePackages = [ pkgs.mutter ];
     extraGSettingsOverrides = ''
    [org.gnome.mutter]
    experimental-features=['scale-monitor-framebuffer']
@@ -125,8 +125,13 @@ users.defaultUserShell = pkgs.zsh;
 home-manager.useGlobalPkgs = true; # https://discourse.nixos.org/t/home-manager-does-not-allowunfree/25681/5 - fixed unfree issue for home manager
 home-manager.users.rob = { pkgs, ... }: {
   home.packages = [ 
+    pkgs.jq
+    pkgs.file
+    pkgs.python313
+    pkgs.gcc
+    pkgs.gnupg
     pkgs.atool 
-  # pkgs.ghostty
+    pkgs.ghostty
     pkgs.httpie 
     pkgs.adw-gtk3
     pkgs.gnomeExtensions.bluetooth-battery-meter
@@ -276,6 +281,7 @@ home-manager.users.rob = { pkgs, ... }: {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+   postman
    unzip
    google-chrome
    slack
@@ -285,16 +291,21 @@ home-manager.users.rob = { pkgs, ... }: {
    libreoffice
    heroku
    inkscape
+   dbeaver-bin
+
  ];
 
  # Enable Nix Flakes
-nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+ nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
  nix.settings = {
     substituters = [ "https://nixpkgs-ruby.cachix.org" "https://cache.nixos.org/" ];
+    trusted-substituters = [ "https://cache.flox.dev" ];
     trusted-public-keys = [ 
       "nixpkgs-ruby.cachix.org-1:RKp+M/Y29IP0kf2VJQqRZeoZaWNXdu63iNufz8kCiBQ="
       "cache.nixos.org-1:LS3WLTDzZ58H2LuW5NkLMbe1HAYs4szPvCBTxj4gS3E="
+      "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
     ];
   };
 
