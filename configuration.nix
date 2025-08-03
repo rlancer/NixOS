@@ -50,10 +50,10 @@
   };
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
+  services.displayManager.gdm.enable = true;
 
 
-  services.xserver.desktopManager.gnome = {
+  services.desktopManager.gnome = {
     enable = true;
     extraGSettingsOverridePackages = [ pkgs.mutter ];
     extraGSettingsOverrides = ''
@@ -161,18 +161,7 @@ home-manager.users.rob = { pkgs, ... }: {
       editor = "vim";
     };
     safe.directory = ["/etc/nixos"];
-	};
- # programs.rbenv = {
- #   enable = true;
- #   plugins = [{name = "ruby-build";
- #   src = pkgs.fetchFromGitHub {
- #     owner = "rbenv";
- #     repo = "ruby-build";
- #     rev = "v20240903";
- #     hash = "sha256-lhsdcTPVJkLURSz4yd952eGvReeVU10I9NxosMvKYSk=";
- #   };
- # }];
- # };    
+  };
  
  programs.awscli = {
    enable = true;
@@ -248,6 +237,51 @@ home-manager.users.rob = { pkgs, ... }: {
 };
 
 
+   programs.zed-editor = {
+        enable = true;
+        extensions = ["nix" "toml" "elixir" "make"];
+
+        ## everything inside of these brackets are Zed options.
+        userSettings = {
+
+            
+
+
+            auto_update = false;
+
+
+
+            lsp = {
+                rust-analyzer = {
+
+                    binary = {
+                        #                        path = lib.getExe pkgs.rust-analyzer;
+                        path_lookup = true;
+                    };
+                };
+                nix = {
+                    binary = {
+                        path_lookup = true;
+                    };
+                };
+
+                elixir-ls = {
+                    binary = {
+                        path_lookup = true;
+                    };
+                    settings = {
+                        dialyzerEnabled = true;
+                    };
+                };
+            };
+
+
+            load_direnv = "shell_hook";
+        };
+
+   
+      };
+
   programs.zsh = {
     enable = true;
     shellAliases = {
@@ -256,7 +290,7 @@ home-manager.users.rob = { pkgs, ... }: {
       edit = "sudo vim /etc/nixos/configuration.nix";
    };
 
-   initExtra = ''
+   initContent = ''
      eval "$(starship init zsh)"
     ''; 
 
@@ -281,7 +315,7 @@ home-manager.users.rob = { pkgs, ... }: {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   postman
+    postman
    unzip
    google-chrome
    slack
@@ -301,6 +335,7 @@ home-manager.users.rob = { pkgs, ... }: {
 
  nix.settings = {
     substituters = [ "https://nixpkgs-ruby.cachix.org" "https://cache.nixos.org/" ];
+    trusted-users = ["root" "rob"];
     trusted-substituters = [ "https://cache.flox.dev" ];
     trusted-public-keys = [ 
       "nixpkgs-ruby.cachix.org-1:RKp+M/Y29IP0kf2VJQqRZeoZaWNXdu63iNufz8kCiBQ="
@@ -333,7 +368,7 @@ networking.extraHosts =
   '';
 
 system.autoUpgrade.enable = true;
-system.autoUpgrade.channel = "https://channels.nixos.org/nixos-24.11";
+system.autoUpgrade.channel = "https://nixos.org/channels/nixos-unstable";
 system.autoUpgrade.allowReboot = false;
 
 
